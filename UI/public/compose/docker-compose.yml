@@ -1,0 +1,33 @@
+version: "3.9"
+
+# Enable choosing services via profiles, ports via .env, and overridable paths.
+# Use COMPOSE_PROFILES in .env or --profile flags to pick services (nginx, media).
+
+services:
+  nginx:
+    image: nginx:latest
+    container_name: ${NGINX_NAME:-nginx}
+    restart: unless-stopped
+    profiles: ["nginx"]
+    ports:
+      - "${NGINX_HTTP_PORT:-80}:80"
+    volumes:
+      - "${NGINX_HTML_DIR:-./nginx/html}:/usr/share/nginx/html:ro"
+      - "${NGINX_CONF_FILE:-./nginx/nginx.conf}:/etc/nginx/nginx.conf:ro"
+
+  media:
+    image: jellyfin/jellyfin:latest
+    container_name: ${JELLYFIN_NAME:-jellyfin}
+    restart: unless-stopped
+    profiles: ["media"]
+    ports:
+      - "${JELLYFIN_HTTP_PORT:-8096}:8096"
+    volumes:
+      - "${JELLYFIN_MEDIA_DIR:-./media}:/media"
+      - "${JELLYFIN_CONFIG_DIR:-./config}:/config"
+      - "${JELLYFIN_CACHE_DIR:-./cache}:/cache"
+    environment:
+      # Optional on Linux: set to your user/group so Jellyfin can read your files
+      PUID: "${PUID:-}"
+      PGID: "${PGID:-}"
+      TZ: "${TZ:-America/Edmonton}"
