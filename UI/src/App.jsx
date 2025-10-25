@@ -16,7 +16,7 @@ function App() {
   return (
     <>
       <h1>Set Up My Home</h1>
-      <div>
+      <div style={{ display: "flex", flexDirection: "column" }}>
         <label>
           <input
             type="checkbox"
